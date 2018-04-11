@@ -34,15 +34,39 @@
               </li>
             </ul>
         </div>
+
+        <!-- 分页器 -->
+        <div class="pagination">
+          <el-pagination background layout="total, sizes, prev, pager, next, jumper" :total="100" :page-sizes="[10, 20, 30, 40]"  @size-change="handleSizeChange" @current-change="handleCurrentChange"></el-pagination>
+        </div>
     </div>
     <div class="content-r fr">
-
+        <div class="sidebar">
+          <div class="panel">
+            <div class="inner">
+              <p>Vue：Vue.js专业中文社区</p>
+              <div>
+                您可以
+                <a href="/signin">登录</a>
+                或
+                <a href="/signup">注册</a>
+                , 也可以
+                <a href="/auth/github">
+                  <span class="span-info">
+                    通过 GitHub 登录
+                  </span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import Api from '@/api'
 
 export default {
   name: 'pages',
@@ -62,7 +86,10 @@ export default {
         message: '招聘'
       }],
       isActive: '0',
-      results: []
+      results: [],
+      page: 1,
+      tab: "share",
+      limit: 30
     }
   },
   methods: {
@@ -83,18 +110,28 @@ export default {
         return parseInt(times / (3600000 * 24)) + "天前"
       } else if (times / (3600000 * 24 * 30) < 12) {
         return parseInt(times / (3600000 * 24 * 30)) + "个月前"
-      } else{
+      } else {
         return parseInt(times / (3600000 * 24 * 30 * 12)) + "年前"
       }
+    },
+    handleSizeChange(val) {
+      this.limit = val
+      this.getTopics(this.page, this.tab, this.limit)
+    },
+    handleCurrentChange(val) {
+      this.page = val
+      this.getTopics(this.page, this.tab, this.limit)
+    },
+    getTopics(page, tab, limit) {
+      axios.get(Api.getHome(page, tab, limit))
+        .then(response => {
+          this.results = response.data.data
+        })
     }
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
-      axios.get("https://www.vue-js.com/api/v1/topics?page=1&tab=share&limit=30&mdrender=true")
-        .then(response => {
-          vm.results = response.data.data
-          console.log(vm.results);
-        })
+      vm.getTopics(vm.page, vm.tab, vm.limit)
     })
   }
 }
@@ -171,6 +208,7 @@ $common-background: #fff;
                     text-overflow: ellipsis;
                     white-space: nowrap;
                     overflow: hidden;
+                    max-width: 70%;
                     .tab,
                     .top {
                         padding: 2px 4px;
@@ -190,7 +228,6 @@ $common-background: #fff;
                         color: #fff;
                     }
                     a {
-                        max-width: 70%;
                         text-overflow: ellipsis;
                         -o-text-overflow: ellipsis;
                         white-space: nowrap;
@@ -232,10 +269,97 @@ $common-background: #fff;
             }
         }
     }
+
+    .pagination {
+        height: 40px;
+        margin: 10px 0 0 10px;
+        ul {
+            display: inline-block;
+            margin-bottom: 0;
+            margin-left: 0;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+            -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+            box-shadow: 0 1px 2px rgba(0,0,0,.05);
+            box-shadow: none;
+            li {
+                display: inline;
+                a {
+                    float: left;
+                    padding: 4px 12px;
+                    line-height: 20px;
+                    text-decoration: none;
+                    background-color: #fff;
+                    border: 1px solid #ddd;
+                    border-left-width: 0;
+                    color: #778087;
+                }
+                a:hover {
+                    background-color: #f5f5f5;
+                }
+            }
+            li:first-child > a {
+                border-left-width: 1px;
+                -webkit-border-bottom-left-radius: 4px;
+                border-bottom-left-radius: 4px;
+                -webkit-border-top-left-radius: 4px;
+                border-top-left-radius: 4px;
+                -moz-border-radius-bottomleft: 4px;
+                -moz-border-radius-topleft: 4px;
+            }
+
+            li:last-child > a {
+                -webkit-border-top-right-radius: 4px;
+                border-top-right-radius: 4px;
+                -webkit-border-bottom-right-radius: 4px;
+                border-bottom-right-radius: 4px;
+                -moz-border-radius-topright: 4px;
+                -moz-border-radius-bottomright: 4px;
+            }
+        }
+    }
 }
 
 .content-r {
     width: 23%;
     background: $common-background;
+    .sidebar {
+        font-size: 14px;
+        .panel {
+            font-size: 13px;
+            .inner {
+                line-height: 31px;
+                padding: 10px;
+                background-color: #fff;
+                border-radius: 0 0 3px 3px;
+                p{
+                  font-size: 14px;
+                }
+                div a {
+                    color: #778087;
+                    .span-info {
+                        display: inline-block;
+                        float: none;
+                        padding: 3px 10px;
+                        border: 0;
+                        margin: 0;
+                        font-size: 14px;
+                        transition: all 0.2s ease-in-out;
+                        cursor: pointer;
+                        letter-spacing: 2px;
+                        box-shadow: none;
+                        border-radius: 3px;
+                        line-height: 2em;
+                        vertical-align: middle;
+                        color: #fff;
+                        background-color: #7597d4;
+                    }
+                }
+
+            }
+        }
+    }
 }
 </style>
