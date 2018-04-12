@@ -9,9 +9,9 @@
         <input type="text" name="" value="">
       </form>
       <ul class="nav clear fr">
-        <li>首页</li>
-        <li>注册</li>
-        <li>登录</li>
+        <li @click="$router.push({name:'allpages'})">首页</li>
+        <li @click="$router.push({name:'register'})">注册</li>
+        <li @click="$router.push({name:'login'})">登录</li>
       </ul>
     </div>
   </div>
@@ -19,7 +19,12 @@
 
 <script>
 export default {
-  name: 'commonHeader'
+  name: 'commonHeader',
+  methods:{
+    reloadPage(){
+      location.reload()
+    }
+  }
 }
 </script>
 
