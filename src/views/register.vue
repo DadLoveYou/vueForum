@@ -46,14 +46,24 @@
         </div>
       </div>
       <div class="content-r fr">
-
+          <sider-bar :showsider="sider"/>
       </div>
   </div>
 </template>
 
 <script>
+import siderBar from '@/views/components/siderBar'
+
 export default {
-  name: "login"
+  name: "register",
+  components: {
+    siderBar
+  },
+  data() {
+    return {
+      sider: false
+    }
+  }
 }
 </script>
 

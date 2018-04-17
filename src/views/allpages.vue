@@ -25,7 +25,7 @@
                     <span class="tab" v-if="result.tab==='ask'">问答</span>
                     <span class="tab" v-if="result.tab==='job'">招聘</span>
                   </template>
-                  <a>{{result.title}}</a>
+                  <a @click="$router.push({name:'details',params:{id:result.id}})">{{result.title}}</a>
                 </div>
                 <div class="lastTime fr">
                   <img :src="result.author.avatar_url" alt="">
@@ -41,7 +41,7 @@
         </div>
     </div>
     <div class="content-r fr">
-      <sider-bar/>
+      <sider-bar :showsider="sider"/>
     </div>
     <Loading :isLoading="isLoading"></Loading>
   </div>
@@ -75,7 +75,8 @@ export default {
       page: 1,
       tab: "share",
       limit: 30,
-      isLoading: false
+      isLoading: false,
+      sider:true
     }
   },
   components:{
@@ -84,24 +85,6 @@ export default {
   methods: {
     changeActive(i) {
       this.isActive = i
-    },
-    delTime(str) {
-      const nowDate = new Date().getTime();
-      const creatDate = new Date(str).getTime();
-      const times = nowDate - creatDate;
-      if ((times / 1000) < 60) {
-        return "刚刚"
-      } else if ((times / 60000) < 60) {
-        return parseInt(times / 60000) + "分钟前"
-      } else if ((times / 3600000) < 24) {
-        return parseInt(times / 3600000) + "小时前"
-      } else if (times / (3600000 * 24) < 30) {
-        return parseInt(times / (3600000 * 24)) + "天前"
-      } else if (times / (3600000 * 24 * 30) < 12) {
-        return parseInt(times / (3600000 * 24 * 30)) + "个月前"
-      } else {
-        return parseInt(times / (3600000 * 24 * 30 * 12)) + "年前"
-      }
     },
     handleSizeChange(val) {
       this.limit = val
